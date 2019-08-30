@@ -8,7 +8,7 @@ call_btn = $('#btnCall');
 put_btn = $('#btnPut');
 close_all_noti = $('#close_all');
 cont = 0;
-max_cont = 12;
+max_cont = 3;
 balance = 0.0;
 min_money = "0.00000010";
 verificado = false;
@@ -24,7 +24,7 @@ function reset() {
 function Ganar() {
     if ($('#btnCall').hasClass('btn-disabled') == false && cont <= max_cont) {
         if (verificado == false) {
-            if (parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)').html().replace("BTC&nbsp;", "")) > 0) {
+            if (parseFloat($('.multiselect-balance').html().replace("BTC", "")) > 0) {
                 martingale();
             } else {
                 reset();
@@ -34,7 +34,7 @@ function Ganar() {
         url = "https://super-trading.tk/technicals/BTCUSDT/";
         $.ajax({
             url: url,
-            success: function (data) {
+            success: function(data) {
                 accion = data[0];
                 cantidad = data[1];
                 volumen_top = parseFloat($('#volumes-top').html());
@@ -91,7 +91,7 @@ function Ganar() {
     }
 }
 (function loop() {
-    setTimeout(function () {
+    setTimeout(function() {
         Ganar();
         loop();
     }, rand);
