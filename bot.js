@@ -8,8 +8,9 @@ call_btn = $('#btnCall');
 put_btn = $('#btnPut');
 close_all_noti = $('#close_all');
 cont = 0;
-max_cont = 0;
+max_cont = 10;
 balance = 0.0;
+max_cont = 10;
 min_money = "0.00000005";
 verificado = false;
 minimo_fuerza = 1;
@@ -27,7 +28,10 @@ function reset() {
 function Ganar() {
 	atual = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
 	if ($('#btnCall').hasClass('btn-disabled') == false && cont <= max_cont) {
-		if (atual < balance_old) {
+		//if (atual < balance_old) {
+		elem_ultima = $('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)');
+		elem_ultima = parseFloat(elem_ultima.html().replace("BTC&nbsp;", ""));
+		if (ultima_jugada < parseFloat(0)) {
 			martingale();
 		} else {
 			reset();
@@ -95,8 +99,9 @@ function Ganar() {
 }
 (function loop() {
 	reset();
+	$('#dealsButtonsRegion > ul > li:nth-child(2) > span').click();
 	setTimeout(function () {
 		Ganar();
 		loop();
-	}, 1000);
+	}, 5000);
 }());
