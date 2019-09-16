@@ -16,6 +16,10 @@ verificado = false;
 minimo_fuerza = 1;
 cantidad_old = 0;
 balance_old = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
+elem_ultima = parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)').html().replace("BTC&nbsp;", "").replace("BTC", ""));
+
+
+
 
 function martingale() {
 	min_money = min_money * 2;
@@ -38,8 +42,7 @@ function Ganar() {
 	if ($('#btnCall').hasClass('btn-disabled') == false && cont < max_cont) {
 		//if (atual < balance_old) {
 		try {
-			elem_ultima = $('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)');
-			elem_ultima = parseFloat(elem_ultima.html().replace("BTC&nbsp;", ""));
+			elem_ultima = parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)').html().replace("BTC&nbsp;", "").replace("BTC", ""));
 		} catch (error) {}
 		calcula_martingale(elem_ultima);
 		$('#amount-field').val(min_money);
