@@ -16,6 +16,7 @@ verificado = false;
 minimo_fuerza = 1;
 cantidad_old = 0;
 balance_old = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
+$('li.tabs-item:nth-child(2)').click();
 elem_ultima = parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)').html().replace("BTC&nbsp;", "").replace("BTC", ""));
 
 
