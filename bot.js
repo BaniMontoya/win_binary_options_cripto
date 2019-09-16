@@ -1,5 +1,5 @@
 minimo_solo = 85;
-minimo_duo = 110;
+minimo_duo = 130;
 minimo_suma_compra = 110;
 minimo_suma_venta = 110;
 rand = 1733;
@@ -10,9 +10,8 @@ close_all_noti = $('#close_all');
 cont = 0;
 max_cont = 1;
 balance = 0.0;
-max_cont = 0;
-min_money_base = "0.000005";
-min_money = "0.0000005";
+min_money_base = "0.00000025";
+min_money = "0.00000025";
 verificado = false;
 minimo_fuerza = 1;
 cantidad_old = 0;
@@ -26,7 +25,7 @@ function reset() {
 	min_money = min_money_base;
 }
 
-function calcula_martingale() {
+function calcula_martingale(elem_ultima) {
 	if (elem_ultima <= parseFloat(0)) {
 		martingale();
 	} else {
@@ -36,13 +35,14 @@ function calcula_martingale() {
 
 function Ganar() {
 	atual = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
-	if ($('#btnCall').hasClass('btn-disabled') == false && cont <= max_cont) {
+	if ($('#btnCall').hasClass('btn-disabled') == false && cont < max_cont) {
 		//if (atual < balance_old) {
-		$('#amount-field').val(min_money);
 		try {
 			elem_ultima = $('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)');
 			elem_ultima = parseFloat(elem_ultima.html().replace("BTC&nbsp;", ""));
 		} catch (error) {}
+		calcula_martingale(elem_ultima);
+		$('#amount-field').val(min_money);
 		calcula_martingale();
 		verificado = true;
 		url = "https://super-trading.tk/technicals/BTCUSD/";
@@ -60,9 +60,9 @@ function Ganar() {
 				price_actual = $('#price-pointer-value').html().replace(" ", "").split('.')[0];
 				if (parseFloat(parseFloat(cantidad)) >= parseFloat(minimo_fuerza)) {
 					if (accion == "c") {
-						if (cantidad_old <= parseFloat(cantidad) || parseFloat(cantidad) > 2) {
+						if (cantidad_old <= parseFloat(cantidad)) {
 							// prediction
-							if (price_actual < precio || parseFloat(cantidad) > 2) {
+							if (price_actual < precio) {
 								// solo
 								if (parseFloat(volumen_top) > minimo_solo || parseFloat(orders_top) > minimo_solo) {
 									$('#btnCall').click();
@@ -77,8 +77,8 @@ function Ganar() {
 						}
 					}
 					if (accion == "v") {
-						if (cantidad_old >= parseFloat(cantidad) || parseFloat(cantidad) > 2) { // prediction
-							if (price_actual > precio || parseFloat(cantidad) > 2) {
+						if (cantidad_old >= parseFloat(cantidad)) { // prediction
+							if (price_actual > precio) {
 								// solo
 								if (parseFloat(volumen_bottom) > minimo_solo || parseFloat(orders_bottom) > minimo_solo) {
 									$('#btnPut').click();
@@ -106,10 +106,12 @@ function Ganar() {
 	}
 }
 (function loop() {
-	$('#dealsButtonsRegion > ul > li:nth-child(2) > span').click();
 	reset();
 	setTimeout(function () {
 		Ganar();
+	}, 1000);
+	setTimeout(function () {
+		$('#dealsButtonsRegion > ul > li:nth-child(2) > span').click();
 		loop();
-	}, 3000);
+	}, 7000);
 }());
