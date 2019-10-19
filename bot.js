@@ -1,121 +1,125 @@
-minimo_solo = 85;
-minimo_duo = 130;
-minimo_suma_compra = 110;
-minimo_suma_venta = 110;
-rand = 1733;
-ultima_jugada = $('#price-pointer-value').html();
+minimo_solo = 80;
+minimo_duo = 75;
+minimo_suma_compra = 133;
+minimo_suma_venta = 133;
+rand = 1320;
+ultima_jugada = $('#price-pointer-value').html().replace(" ", "").split('.')[0];
 call_btn = $('#btnCall');
 put_btn = $('#btnPut');
 close_all_noti = $('#close_all');
 cont = 0;
 max_cont = 1;
 balance = 0.0;
-min_money_base = "0.00000025";
-min_money = "0.00000025";
+min_money = "0.00000005";
 verificado = false;
-minimo_fuerza = 1;
-cantidad_old = 0;
-balance_old = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
-$('li.tabs-item:nth-child(2)').click();
-elem_ultima = parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)').html().replace("BTC&nbsp;", "").replace("BTC", ""));
-
-
-
-
-function martingale() {
-	min_money = min_money * 2;
-}
-
-function reset() {
-	min_money = min_money_base;
-}
-
-function calcula_martingale(elem_ultima) {
-	if (elem_ultima <= parseFloat(0)) {
-		martingale();
-	} else {
-		reset();
-	}
-}
 
 function Ganar() {
-	atual = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
-	if ($('#btnCall').hasClass('btn-disabled') == false && cont < max_cont) {
-		//if (atual < balance_old) {
-		try {
-			elem_ultima = parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:nth-child(10)').html().replace("BTC&nbsp;", "").replace("BTC", ""));
-		} catch (error) {}
-		calcula_martingale(elem_ultima);
-		$('#amount-field').val(min_money);
-		calcula_martingale();
-		verificado = true;
+	if ($('#btnCall').hasClass('btn-disabled') == false && cont <= max_cont) {
 		url = "https://super-trading.tk/technicals/BTCUSD/";
 		$.ajax({
 			url: url,
 			success: function (data) {
 				accion = data[0];
-				cantidad = data[1];
-				precio = data.split(", ")[1];
-				volumen_top = parseFloat($('#volumes-top').html().replace("%", ""));
-				orders_top = parseFloat($('#orders-top').html().replace("%", ""));
-				volumen_bottom = parseFloat($('#volumes-bottom').html().replace("%", ""));
-				orders_bottom = parseFloat($('#orders-bottom').html().replace("%", ""));
+				prediccion = data.split(", ")[1];
+				potencia = data[1];
+				volumen_top = parseFloat($('#volumes-top').html());
+				orders_top = $('#orders-top').html();
+				volumen_bottom = $('#volumes-bottom').html();
+				orders_bottom = $('#orders-bottom').html();
 				$('.notif_item-close').click();
-				price_actual = $('#price-pointer-value').html().replace(" ", "").split('.')[0];
-				if (parseFloat(parseFloat(cantidad)) >= parseFloat(minimo_fuerza)) {
-					if (accion == "c") {
-						if (cantidad_old <= parseFloat(cantidad)) {
-							// prediction
-							if (price_actual < precio) {
-								// solo
-								if (parseFloat(volumen_top) > minimo_solo || parseFloat(orders_top) > minimo_solo) {
-									$('#btnCall').click();
-									cont = cont + 1;
-								}
-								// duo
-								if (parseFloat(parseFloat(volumen_top) + parseFloat(orders_top)) > minimo_duo) {
-									$('#btnCall').click();
-									cont = cont + 1;
-								}
-							}
-						}
-					}
-					if (accion == "v") {
-						if (cantidad_old >= parseFloat(cantidad)) { // prediction
-							if (price_actual > precio) {
-								// solo
-								if (parseFloat(volumen_bottom) > minimo_solo || parseFloat(orders_bottom) > minimo_solo) {
-									$('#btnPut').click();
-									cont = cont + 1;
-								}
-								// duo
-								if (parseFloat(parseFloat(volumen_bottom) + parseFloat(orders_bottom)) > minimo_duo) {
-									$('#btnPut').click();
-									cont = cont + 1;
-								}
-							}
-						}
+				price_actual = $('#price-pointer-value');
+				predice = -1;
+				if (price_actual > prediccion && potencia > 2 && price_actual - prediccion > 30) {
+					predice = 0;
+				}
+				if (price_actual < prediccion && potencia > 2 && prediccion - price_actual > 30) {
+					predice = 1;
+				}
+
+				function martingale() {
+					if (ultima_cerrada < 0) {
+						$('#bid_amount_buttons > input:nth-child(3)').click();
+					} else {
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(4)').click();
+						$('#bid_amount_buttons > input:nth-child(3)').click();
+						$('#bid_amount_buttons > input:nth-child(3)').click();
+						$('#bid_amount_buttons > input:nth-child(3)').click();
+						$('#bid_amount_buttons > input:nth-child(3)').click();
 					}
 				}
-				if (accion == "n") {}
-				cantidad_old = data[1];
-				ultima_jugada = parseFloat(price_actual);
-				balance_old = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("BTC&nbsp;", ""));
+				if (accion == "c" && predice == 1 && potencia > 2) {
+					//SUMA COMPRA
+					if (parseFloat(parseFloat(volumen_top) + parseFloat(orders_top)) > minimo_suma_compra) {
+						martingale();
+						$('#btnCall').click();
+						cont = cont + 1;
+					}
+					//DUO COMPRA
+					if (parseFloat(volumen_top) > minimo_duo && parseFloat(orders_top) > minimo_duo) {
+						martingale();
+						$('#btnCall').click();
+						cont = cont + 1;
+					}
+					//SOLO COMPRA
+					if (parseFloat(volumen_top) > minimo_solo || parseFloat(orders_top) > minimo_solo) {
+						//if (ultima_jugada > parseFloat(price_actual.html().replace(" ", "").split('.')[0])) {
+						//{
+						martingale();
+						$('#btnCall').click();
+						cont = cont + 1;
+						//}
+						//}
+					}
+				}
+				if (accion == "v" && predice == 0 && potencia > 2) {
+					//SUMA VENTA
+					if (parseFloat(parseFloat(volumen_bottom) + parseFloat(orders_bottom)) > minimo_suma_venta) {
+						martingale();
+						$('#btnPut').click();
+						cont = cont + 1;
+					}
+					//DUO VENTA
+					if (parseFloat(volumen_bottom) > minimo_duo && parseFloat(orders_bottom) > minimo_duo) {
+						$('#btnPut').click();
+						cont = cont + 1;
+					}
+					//SOLO VENTA
+					if (parseFloat(volumen_bottom) > minimo_solo || parseFloat(orders_bottom) > minimo_solo) {
+						//if (ultima_jugada < parseFloat(price_actual.html().replace(" ", "").split('.')[0])) {
+						$('#btnPut').click();
+						cont = cont + 1;
+						//}
+					}
+				}
 			}
 		});
-	}
-	if ($('#btnCall').hasClass('btn-disabled') == true) {
+	} else {
 		cont = 0;
-		verificado = false;
 	}
+	try {
+		ultima_jugada = parseFloat(price_actual.html().replace(" ", "").split('.')[0]);
+		balance = parseFloat($('#header_btns > div > div > ul > li > div.multiselect-balance').html().replace("&nbsp;BTC", ""));
+	} catch (error) {}
 }
 (function loop() {
-	reset();
 	setTimeout(function () {
 		Ganar();
-	}, 1000);
-	setTimeout(function () {
-		$('#dealsButtonsRegion > ul > li:nth-child(2) > span').click();
 		loop();
-	}, 7000);
+	}, rand);
 }());
+setTimeout(function () {
+	$('#dealsButtonsRegion > ul > li:nth-child(2) > span').click();
+	setTimeout(function () {
+		ultima_cerrada = parseFloat($('#scroll-container > table > tbody > tr:nth-child(1) > td:last').html().replace("BTC&nbsp;", ""));
+	}, rand * 7);
+}, rand * 20);
